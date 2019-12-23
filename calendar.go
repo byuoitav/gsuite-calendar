@@ -13,18 +13,19 @@ import (
 )
 
 type Calendar struct {
-	UserEmail       string
+	UserEmail string
+	//Path to file with service account credentials
 	CredentialsPath string
 	RoomId          string
 }
 
 func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
-	calSvc, err := AuthenticateClient(ctx)
+	calSvc, err := c.AuthenticateClient(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot authenticate client: %w", err)
 	}
 
-	calID, err := GetCalendarID(calSvc)
+	calID, err := c.GetCalendarID(calSvc)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +41,8 @@ func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
 
 	var events []calendars.Event
 	for _, event := range eventList.Items {
-		eventStart, _ := time.Parse(event.Start.DateTime)
-		eventEnd, _ := time.Parse(event.End.DateTime)
+		eventStart, _ := time.Parse(event.Start.DateTime, "2006-01-02T15:04:05-07:00")
+		eventEnd, _ := time.Parse(event.End.DateTime, "2006-01-02T15:04:05-07:00")
 
 		events = append(events, calendars.Event{
 			Title:     event.Summary,
@@ -53,12 +54,12 @@ func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
 }
 
 func (c *Calendar) CreateEvent(ctx context.Context, event calendars.Event) error {
-	calSvc, err := AuthenticateClient()
+	calSvc, err := c.AuthenticateClient(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot authenticate client: %w", err)
 	}
 
-	calID, err := GetCalendarID(calSvc)
+	calID, err := c.GetCalendarID(calSvc)
 	if err != nil {
 		return err
 	}
@@ -89,11 +90,11 @@ func (c *Calendar) GetCalendarID(calSvc *calendar.Service) (string, error) {
 	}
 
 	for _, cal := range calList.Items {
-		if cal.Summary == room {
+		if cal.Summary == c.RoomId {
 			return cal.Id, nil
 		}
 	}
-	return "", fmt.Errorf("room: %s does not have an assigned calendar", room)
+	return "", fmt.Errorf("room: %s does not have an assigned calendar", c.RoomId)
 }
 
 func (c *Calendar) AuthenticateClient(ctx context.Context) (*calendar.Service, error) {
