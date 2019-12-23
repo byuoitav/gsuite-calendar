@@ -16,7 +16,7 @@ type Calendar struct {
 	UserEmail string
 	//Path to file with service account credentials
 	CredentialsPath string
-	RoomId          string
+	RoomID          string
 }
 
 func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
@@ -90,11 +90,11 @@ func (c *Calendar) GetCalendarID(calSvc *calendar.Service) (string, error) {
 	}
 
 	for _, cal := range calList.Items {
-		if cal.Summary == c.RoomId {
+		if cal.Summary == c.RoomID {
 			return cal.Id, nil
 		}
 	}
-	return "", fmt.Errorf("room: %s does not have an assigned calendar", c.RoomId)
+	return "", fmt.Errorf("room: %s does not have an assigned calendar", c.RoomID)
 }
 
 func (c *Calendar) AuthenticateClient(ctx context.Context) (*calendar.Service, error) {
