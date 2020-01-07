@@ -41,8 +41,8 @@ func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
 
 	var events []calendars.Event
 	for _, event := range eventList.Items {
-		eventStart, _ := time.Parse(event.Start.DateTime, "2006-01-02T15:04:05-07:00")
-		eventEnd, _ := time.Parse(event.End.DateTime, "2006-01-02T15:04:05-07:00")
+		eventStart, _ := time.Parse("2006-01-02T15:04:05-07:00", event.Start.DateTime)
+		eventEnd, _ := time.Parse("2006-01-02T15:04:05-07:00", event.End.DateTime)
 
 		events = append(events, calendars.Event{
 			Title:     event.Summary,
