@@ -39,8 +39,8 @@ func (c *Calendar) GetEvents(ctx context.Context) ([]calendars.Event, error) {
 		return nil, fmt.Errorf("unable to retrieve events: %w", err)
 	}
 
-	timeZone, _ := time.Now().Zone()
-	location, _ := time.LoadLocation(timeZone)
+	// timeZone, _ := time.Now().Zone()
+	location, _ := time.LoadLocation("America/Denver")
 	var events []calendars.Event
 	for _, event := range eventList.Items {
 		eventStart, _ := time.Parse("2006-01-02T15:04:05-07:00", event.Start.DateTime)
